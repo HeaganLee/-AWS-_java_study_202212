@@ -64,22 +64,7 @@ public class J12_UserRepository {
 		
 	}
 	
-	public J12_User findUserpw(String pw) {
-		J12_User user = null;
-		
-		for(J12_User u : userTable) {
-			if(u == null) {
-				continue;
-			}
-			if(u.getPassword().equals(pw)) {
-				user = u;
-				break;
-			}
-		}
-		
-		return user;
-		
-	}
+	
 
 	
 }
