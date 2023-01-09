@@ -8,10 +8,17 @@ public class J12_UserService {
 	// 미리 선언
 	// 전역변수를 사용하는 이유는 
 	private Scanner scanner;
+	private J12_UserRepository userRepository;
 	
-    public J12_UserService() {
+	// 결합도를 낮추기위해 매개변수를 이용
+	// repository가 service에 의존하고 있다. 즉 repository가 의존성이다.
+	// 의존성을 해주어야 확장성이 생긴다.
+	
+    public J12_UserService(J12_UserRepository userRepository) {
     	// 결합도가 높은 코드
     	scanner = new Scanner(System.in);
+    	// usertable를 불러오기위해
+    	this.userRepository = userRepository;
     }
 	
     // run()은 무한 반복을 통해 메인메뉴를 보여주는 생성자이다.
@@ -69,18 +76,138 @@ public class J12_UserService {
 		System.out.println();
 	}
 	
+	private void showUsers() {
+		J12_User[] users = userRepository.getUserTable();
+		
+		System.out.println("=======<< 회원 전체 조회 >> ========");
+		
+		// user 객체의 주소를 꺼냄
+		// 참조를 통해 실행이 가능
+		for(J12_User user : users) {
+			System.out.println(user.toString());
+		}
+		
+		System.out.println("===================================");
+	}
+	
+	
+	private void registerUser() {
+		J12_User user = new J12_User();
+		
+		System.out.println("=======<< 회원 등록 >> ========");
+		System.out.print("사용자이름: ");
+		// set을 통해 바로 입력을 받음
+		user.setUsername(scanner.nextLine());
+		
+		System.out.print("비밀번호: ");
+		user.setPassword(scanner.nextLine());
+		
+		System.out.print("성명: ");
+		user.setName(scanner.nextLine());
+		
+		System.out.print("이메일: ");
+		user.setEmail(scanner.nextLine());
+		
+		userRepository.saveUser(user);
+	}
+	
+	private void findUser() {
+		
+		boolean loop = true;
+		while(loop) {
+		String username;
+		
+		System.out.println("=======<< 해당 사용자 조회 >> ========");
+		
+		J12_User user = new J12_User();
+		System.out.print("사용자 입력: ");
+		username = scanner.nextLine();
+		user = userRepository.findUsername(username);
+	
+		loop = false;
+		if (user == null) {
+			System.out.println("없는 사용자 입니다. 다시 입력하세요.");
+			loop = true;
+		} else {
+			System.out.println(user);
+		}
+		}
+		}
+	
+	private void modyfyUser() {
+		
+		boolean loop = true;
+		while(loop) {
+			
+		
+		String username;
+		char select = '\0';
+		String pw = null;
+		
+		J12_User user = new J12_User();
+		System.out.print("사용자 입력: ");
+		username = scanner.nextLine();
+		user = userRepository.findUsername(username);
+		
+		if (user == null) {
+			System.out.println("해당 사용자이름은 존재하지 않는 사용자이름입니다.");
+			loop = true;
+		}else {
+			loop = false;
+			boolean loop2 = true;
+			while(loop2) {
+				
+				editMenu(username);
+				select = scanner.next().charAt(0);
+				
+				if(select == 'b' || select == 'B') {
+					loop2 = false;
+				}else if(select == '1') {
+					
+					System.out.println("========<< 비밀번호 변경 >>========");
+					System.out.print("기존의 비밀번호를 입력하시오: ");
+					pw = scanner.nextLine();
+					J12_User password = userRepository.findUserpw(pw);
+					if (password == null) {
+						System.out.println("비밀번호가 일치하지 않습니다.");
+					}else {
+						String a = null;
+						String b = null;
+						System.out.print("새로운 비밀번호 입력: ");
+						a = scanner.nextLine();
+						System.out.print("새로운 비밀번호 확인: ");
+						b = scanner.nextLine();
+						
+						if(a == b) {
+							
+						}
+						
+					}
+					
+				}
+			}
+			
+		}
+		
+		}
+		
+	}
+	
 	private boolean mainMenu(char select) {
 		boolean flag = true;
 		
+		// isExit가 true가 아니면 else로 실행
 		if(isExit(select)) {
 			flag = false;
+			
 		}else {
 			if(select == '1') {
+				showUsers();
 				
 			}else if(select == '2') {
-				
+				registerUser();
 			}else if(select == '3') {
-				
+				findUser();
 			}else if(select == '4') {
 				
 			}else {
@@ -89,10 +216,24 @@ public class J12_UserService {
 			}
 			
 		}
+		// 줄바꿈
 		System.out.println();
 		
 		// flag 값을 리턴 시켜서 loopFlag에 대입
 		return flag;
+	}
+	
+	// 수정메뉴
+	public void editMenu(String username) {
+		System.out.println("========<< 수정메뉴 >>========");
+		System.out.println("사용자이름은: " + username);
+		System.out.println("==============================");
+		System.out.println("1. 비밀번호 변경");
+		System.out.println("2. 이름 변경");
+		System.out.println("3. 이메일 변경");
+		System.out.println("==============================");
+		System.out.println("b. 뒤로가기");
+		System.out.println();	
 	}
 	
 	// 필요없는 변수를 선호 할 필요 없이 return으로 바로 받는 것
