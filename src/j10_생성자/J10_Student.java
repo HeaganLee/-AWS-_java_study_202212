@@ -11,11 +11,12 @@ public class J10_Student {
 	        // 메소드도 참조 메소드, 래퍼런스 메소드, 멤버 메소드라 불림
 	        // 지역변수는 매개변수랑 별개로 침
 	
+	// required argument 생성자는 메개변수가 final이어야 한다.
+	// no argument
 	J10_Student(){
 		System.out.println("기본 출력");
 		
 	}
-	
 	J10_Student(int age){
 		System.out.println("학생의 나이: " + age);
 		
