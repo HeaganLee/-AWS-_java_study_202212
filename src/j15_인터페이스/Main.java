@@ -8,7 +8,8 @@ public class Main {
 		equipments[0] = new GeneralCalculator();
 		equipments[1] = new SmartPhone();
 		
-		Calculator calculator = new Computer();
+		// 생성이 가능하다.
+		// Calculator calculator = new Computer();
 		
 		System.out.println("모든 장비 전원 켜기");
 		for(Equipment eq : equipments) {
