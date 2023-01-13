@@ -1,6 +1,6 @@
 package j17_스태틱;
 
-import java.text.DecimalFormat;
+
 import java.time.LocalDateTime;
 
 public class Car {
@@ -14,12 +14,9 @@ public class Car {
 	private String modelName;
 	private int size = 4;
 	
-	DecimalFormat dt = new DecimalFormat("0000");
-	
 	public Car(String modelName) {
 		this.modelName = modelName;
 		
-		String s = dt.format(ai);
 		// 0을 4개를 채우겠다.
 		serialCode = CODE + String.format("%04d", ai);
 		ai++;
