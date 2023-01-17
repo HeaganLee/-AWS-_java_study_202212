@@ -15,11 +15,12 @@ public class setStringMain {
 		Set<String> setStr = new HashSet<>();
 		List<String> listStr = new ArrayList<>();
 		
+		
 		listStr.add("임나영");
 		listStr.add("이강용");
 		listStr.add("임나영");
 		listStr.add("임나영");
-		
+		System.out.println("========List 출력========");
 		System.out.println(listStr);
 		
 		setStr.add("김상현");
@@ -29,17 +30,23 @@ public class setStringMain {
 		setStr.add("최해혁");
 		setStr.addAll(listStr);
 		
+		System.out.println();
+		System.out.println("========set 출력========");
 		System.out.println(setStr);
+		System.out.println();
+	
 		
-		System.out.println(setStr);
 		String searchName = "손지호";
+		
+		System.out.println("========for each문========");
 		
 		for (String name : setStr) {
 			if(name.equals(searchName)) {
 				System.out.println(name);
 			}
 		}
-		
+		System.out.println();
+		System.out.println("=========Iterator 반복자========");
 		// Iterator
 		Iterator<String> iterator = setStr.iterator();
 		while(iterator.hasNext()) {
