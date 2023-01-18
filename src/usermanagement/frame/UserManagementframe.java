@@ -1,24 +1,35 @@
 package usermanagement.frame;
 
-import java.awt.EventQueue;
-
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
 import java.awt.CardLayout;
 import java.awt.Color;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
+import java.awt.EventQueue;
 import java.awt.Font;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-
-import javax.swing.JButton;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
+import com.google.gson.JsonObject;
+
+import usermanagement.service.UserService;
 
 public class UserManagementframe extends JFrame {
+	
+	private List<JTextField> loginFields;
+	private List<JTextField> registerFields;
 
 	private CardLayout mainCard;
 	private JPanel mainPanel;
@@ -49,6 +60,9 @@ public class UserManagementframe extends JFrame {
 	 * Create the frame.
 	 */
 	public UserManagementframe() {
+		loginFields = new ArrayList<>();
+		registerFields = new ArrayList<>();
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 400, 500);
 		mainPanel = new JPanel();
@@ -97,12 +111,24 @@ public class UserManagementframe extends JFrame {
 		passwordLabel.setBounds(34, 279, 163, 22);
 		loginPanel.add(passwordLabel);
 		
-		JButton btnNewButton = new JButton("LogIn");
-		btnNewButton.setBackground(new Color(128, 128, 128));
-		btnNewButton.setFont(new Font("D2Coding", Font.BOLD, 19));
-		btnNewButton.setForeground(new Color(0, 0, 0));
-		btnNewButton.setBounds(34, 350, 320, 44);
-		loginPanel.add(btnNewButton);
+		JButton loginButton = new JButton("LogIn");
+		
+		loginButton.addMouseListener(new MouseAdapter() {
+			
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				
+				
+			}
+		});
+		
+	
+
+		loginButton.setBackground(new Color(128, 128, 128));
+		loginButton.setFont(new Font("D2Coding", Font.BOLD, 19));
+		loginButton.setForeground(new Color(0, 0, 0));
+		loginButton.setBounds(34, 350, 320, 44);
+		loginPanel.add(loginButton);
 		
 		JLabel signupDesc = new JLabel("Don't have an account?");
 		signupDesc.setFont(new Font("D2Coding", Font.PLAIN, 12));
@@ -139,6 +165,8 @@ public class UserManagementframe extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				mainCard.show(mainPanel,  "loginPanel");
+				clearFields(loginFields);
+				clearFields(registerFields);
 			}
 		});
 		SiginInLink.setHorizontalAlignment(SwingConstants.CENTER);
@@ -197,10 +225,58 @@ public class UserManagementframe extends JFrame {
 		resisterpanel.add(registerEamilField);
 		
 		JButton registerButton = new JButton("Register");
+		registerButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		registerButton.addMouseListener(new MouseAdapter() {
+			@Override
+			// 마우스클릭을 통해서 일어나는 상황
+			public void mouseClicked(MouseEvent e) {
+				JsonObject userJson = new JsonObject();
+				userJson.addProperty("username", registerUsernameField.getText());
+				userJson.addProperty("password", registerPasswordlField.getText());
+				userJson.addProperty("name", registerNameField.getText());
+				userJson.addProperty("email", registerEamilField.getText());
+				
+				System.out.println(userJson.toString());
+				
+				UserService userService = UserService.getInstance();
+				
+				Map<String, String> response = userService.register(userJson.toString());
+				
+				if(response.containsKey("error")) {
+					JOptionPane.showMessageDialog(null, response.get("error"), "error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				
+				JOptionPane.showMessageDialog(null, response.get("ok"), "ok", JOptionPane.INFORMATION_MESSAGE);
+				mainCard.show(mainPanel, "loginPanel");
+				clearFields(registerFields);
+		   }
+		});
 		registerButton.setForeground(Color.BLACK);
 		registerButton.setFont(new Font("D2Coding", Font.BOLD, 19));
 		registerButton.setBackground(Color.GRAY);
 		registerButton.setBounds(97, 434, 195, 31);
 		resisterpanel.add(registerButton);
+		
+		loginFields.add(usernameField);
+		loginFields.add(passwordField);
+		
+		registerFields.add(registerUsernameField);
+		registerFields.add(registerPasswordlField);
+		registerFields.add(registerNameField);
+		registerFields.add(registerEamilField);
+	}
+	
+	private void clearFields(List<JTextField> textFields) {
+		for(JTextField field : textFields) {
+			if(field.getText().isEmpty()) {
+				continue;
+			}
+			field.setText("");
+		}
+		
 	}
 }
