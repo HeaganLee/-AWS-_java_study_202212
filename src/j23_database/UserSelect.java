@@ -1,0 +1,65 @@
+package j23_database;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import usermanagement.entity.User;
+
+public class UserSelect {
+	
+	private DBConnectionMgr pool;
+	
+	public UserSelect() {
+		pool = DBConnectionMgr.getInstance();
+	}
+	
+	// User를 찾으면 User의 값을 user로 리턴
+	// 못 찾으면 null
+	public User findUsrerByUsername(String username) {
+		User user = null;
+		
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con = pool.getConnection();
+			// username이 ?인 것을 가져온다.
+			String sql = "select user_id, username, password, name, email from user_mst where username = ?";
+			pstmt = con.prepareStatement(sql);
+			// 첫번째 ?에 username을 넣어준다.
+			pstmt.setString(1, username);
+			
+			rs = pstmt.executeQuery();
+			if(rs.next()) {
+				user = User.builder()
+						.userId(rs.getInt(1))
+						.username(rs.getString(2))
+						.password(rs.getString(3))
+						.name(rs.getString(4))
+						.email(rs.getString(5))
+						.build();
+			}
+			 
+		
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			pool.freeConnection(con, pstmt, rs);
+		}
+		
+		
+		return user;
+	}
+	
+	public static void main(String[] args) {
+		UserSelect userSelect = new UserSelect();
+		
+		User user = userSelect.findUsrerByUsername("aaa");
+		
+		System.out.println(user);
+		
+	}
+}

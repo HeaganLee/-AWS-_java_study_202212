@@ -13,10 +13,16 @@ import j20_json.builder.User;
 
 public class UserInsert {
 	// DBConnectionMgr의 객체를 둔 pool 변수 생성
+	// pool은 엄청 깊은 수영장으로 생각하면 됨
+	// DBC의 수영장이라고 생각을 해라
+	// 다 수용을 할 수 없으니 수용자를 관리하기 위해
+	// pool은 connection
+	// 트래픽 관리를 위한 pool
 	private DBConnectionMgr pool;
 	
 	public UserInsert() {
 		// DBConnectionMgr이 싱글톤이기에 getInstance를 통해서 객체를 생성
+		// 여러개를 만들면 관리하기가 힘들기에 싱글톤으로 만들었다.
 		pool = DBConnectionMgr.getInstance();
 	}
 	
@@ -49,7 +55,9 @@ public class UserInsert {
 			// MySql 연결
 			connection = pool.getConnection();
 			
+			
 			// 일일히 + '" 값 "' + 하면 귀찮기 때문에
+			// 미완성된 sql문을 받고 ?를 채운다.
 			sql = "insert into user_mst\r\n"
 					+ "values (0, ?, ?, ?, ?)";
 			
@@ -57,17 +65,27 @@ public class UserInsert {
 			// RETURN_GENERATEDE_KEYS는 AutoIncrement 키의 값을 가져오는데 사용이 되어진다.
 			preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
 			// setString(? 기준으로 순서, 가져올 값)
+			// set을 통해 원하는 값을 넣는다.
 			preparedStatement.setString(1, user.getUsername());
 			preparedStatement.setString(2, user.getPassword());
 			preparedStatement.setString(3, user.getName());
 			preparedStatement.setString(4, user.getEmail());
 			
 			// 몇개가 적용이 되었는지 확인
+			// excuteUpdate를 통해 쿼리를 실행
+			// 단, preparedStatement는 insert, update, delete
 			successCount = preparedStatement.executeUpdate(); // insert, update, delete 명령 실행
 			// 결과값
+			// ai로 만들어 지는 키값을 가져온다.
+			// 왜냐하면 java에서는 현재 기본키가 어떤 값인지 모르기 때문이다.
+			// getGeneratedKeys()의 타입은 ResultSet이다.
+			// rs는 점점 내려가면서 해당 값을 가져온다.
 			resultSet = preparedStatement.getGeneratedKeys();
 			
 			// 여기서의 next는 값이 아니다.
+			// resultSet.next()에서는 true,false를 가지고 온다.
+			// 만약 있다면 if문이 실행되고
+			// 없다면 실행되지 않는다.
 			if(resultSet.next()) {
 				System.out.println("이번에 만들어진 user_id Key 값: " + resultSet.getInt(1));
 				// 이번에 만들어진 키 값을 넣는다.
@@ -156,7 +174,8 @@ public class UserInsert {
 		
 		/*===========================================================================================*/
 		
-		
+		// list는 꺼내서 아용할 때 반복을 많이 할 때 
+		// map은 임시 객체 내가 원하는 값을 바로 끄집어 낼때
 		List<Integer> roleIdList = new ArrayList<>();
 		roleIdList.add(2);
 		roleIdList.add(3);
@@ -167,7 +186,7 @@ public class UserInsert {
 		
 		successCount = userInsert.saveRoles(map);
 		
-		System.out.println(map);
+		System.out.println("쿼리 실행 성공: " + successCount + "건");
 	}
 	
 	
