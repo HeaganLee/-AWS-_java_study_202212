@@ -1,6 +1,6 @@
 package j12_상속.casting2;
 
-public class main {
+public class Main {
 	
 	public static void main(String[] args) {
 		Taxi taxi = new Taxi();

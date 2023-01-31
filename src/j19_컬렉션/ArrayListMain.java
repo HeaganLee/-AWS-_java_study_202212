@@ -16,6 +16,8 @@ public class ArrayListMain {
 	 * D delete
 	 */
 	
+	
+	
 	public static void main(String[] args) {
 		List<String> strList = new ArrayList<>();
 		
@@ -122,6 +124,10 @@ public class ArrayListMain {
 		while(iterator.hasNext()) {
 			String lang2 = iterator.next();
 			System.out.println("[값3]: " + lang2);
+			
+			
+			
+			
 		}
 	}
 
