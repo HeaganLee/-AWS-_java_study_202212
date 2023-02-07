@@ -12,6 +12,7 @@ public class A {
 		students = new Student[3];
 	}
 	
+	// 딱하나만 새성하기 위해
 	public static A getInstance(){
 		if(instance == null) {
 			instance = new A();
