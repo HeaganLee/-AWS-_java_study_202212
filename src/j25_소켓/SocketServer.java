@@ -43,7 +43,7 @@ public class SocketServer {
 				OutputStream outputStream = socket.getOutputStream();
 				// PrintWriter를 통해 클라이언트에게 보냄
 				PrintWriter out = new PrintWriter(outputStream, true);
-				out.println("___서버에 접속한 것을 환영합니다.");
+				out.print("___서버에 접속한 것을 환영합니다.");
 			}
 			
 			
