@@ -14,10 +14,17 @@ public class SocketServer extends Thread {
 	
 	public static List<SocketServer> clientList = new ArrayList<>();
 	private Socket socket;
+	private InputStream inputStream;
+	private OutputStream outputStream;
+	
+	private static int autoIncrement = 1;
 	private String name;
 	
 	public SocketServer(Socket socket) {
 		this.socket = socket;
+		// 유저가 들어올떄 마다 autoIncrement 증가
+		name = "user" + autoIncrement++;
+		// clientList에는 소켓이 들어온다.
 		clientList.add(this);
 	}
 	
@@ -26,49 +33,55 @@ public class SocketServer extends Thread {
 		System.out.println("[연결된 클라이언트 정보]");
 		System.out.println("IP: " + socket.getInetAddress());
 		
-		InputStream inputStream;
 		try {
 			inputStream = socket.getInputStream();
 			BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 			
-			OutputStream outputStream = socket.getOutputStream();
+			sendToAll(name + "님이 접속하였습니다.");
+			
+			outputStream = socket.getOutputStream();
 			PrintWriter writer = new PrintWriter(outputStream, true);
 			
-			writer.println("서버 접속 성공!");
-			writer.println("사용자 이름을 입력하세요: ");
+			writer.println(name + "님이 접속하였습니다.");
 			
-			String messase = null;
-			boolean loginFlag = false;
-			while((messase = reader.readLine()) != null) {
-				if(name == null) {
-					name = messase;
-					System.out.println("\n서버에" + name + "님이 점속하였습니다.");
+			while(true) {
+				// 메세지가 들어올때 까지 기다림(담당자가 대기하고 있다)
+				String message = reader.readLine();
+				// 메세지가 null인지 체크
+				// null이 들어왔다는 것은 통신이 끊겼다.
+				if(message == null) {
+					break;
 				}
-				
-					for(SocketServer s : clientList)	{
-					try {
-						outputStream = s.socket.getOutputStream();
-						writer = new PrintWriter(outputStream, true);
-						if(!loginFlag) {
-							writer.println("\n" + s.name + "님이 접속하였습니다.");
-							loginFlag = true;
-							continue;
-						}
-						writer.println("\n" + s.name + ": " + messase);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				
+				sendToAll(message);
 			}
-			
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			try {
+				inputStream.close();
+				outputStream.close();
+				socket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
 		
 		
+	}
+	// 메세지를 받고 소켓서버하나는 clientList에서 꺼낸다.
+	// 클라이언트에게 output를 지시
+	// 메세지를 서버에 접속을 하고있는 모든 사용자들에게 보냄
+	private void sendToAll(String message) throws IOException {
+		for(SocketServer socketServer : clientList) {
+			outputStream = socketServer.socket.getOutputStream();
+			PrintWriter writer = new PrintWriter(outputStream, true);
+			writer.println(name + ": " + message);
+			
+		}
 	}
 	
 }

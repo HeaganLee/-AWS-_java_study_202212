@@ -15,9 +15,9 @@ public class Server {
 			
 			// 클라이언트의 접속을 받는 무한반복문
 			while(true) {
-				// 클라이언트 접속을 기다림
+				// 클라이언트의 연결을 기다림.
 				Socket socket = serverSocket.accept();
-				// 소켓 생성과 동시에 스레드 생성
+				// 클라이언트가 연결이 되면 소켓 객체를 하나 생성한다.(하나의 소켓은 하나의 클라이언트)
 				SocketServer socketServer = new SocketServer(socket);
 				// 스레드 실행
 				socketServer.start();

@@ -22,11 +22,6 @@ public class ClientSend extends Thread{
 			Scanner scanner = new Scanner(System.in);
 			
 			while(true) {
-				if(Client.name == null) {
-					Client.name = scanner.nextLine();
-					writer.println(scanner.nextLine());
-					continue;
-				}
 				writer.println(scanner.nextLine());
 			}
 		} catch (IOException e) {
