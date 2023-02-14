@@ -1,5 +1,6 @@
 package simplechatting2.client;
 
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -50,7 +51,8 @@ public class ChattingClient extends JFrame {
 	private Socket socket;
 	private Gson gson;
 	private String username;
-
+	
+	private boolean button_click;
 	private JPanel contentPane;
 	private JTextField ipInput;
 	private JTextField portInput;
@@ -93,8 +95,10 @@ public class ChattingClient extends JFrame {
 		connectButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
+				
 				String ip = null;
 				int port = 0;
+				
 				
 				ip = ipInput.getText();
 				port = Integer.parseInt(portInput.getText());
@@ -106,6 +110,9 @@ public class ChattingClient extends JFrame {
 							socket.getInetAddress() + "서버 접속", 
 							"접속성공", 
 							JOptionPane.INFORMATION_MESSAGE);
+					
+					connectButton.setEnabled(false);
+					connectButton.removeMouseListener(this);
 					
 					ClientRecive clientRecive = new ClientRecive(socket);
 					clientRecive.start();
@@ -134,9 +141,12 @@ public class ChattingClient extends JFrame {
 					e1.printStackTrace();
 				}
 				connectButton.setEnabled(false);
-				connectButton.setVisible(false);
+				ipInput.setEditable(false);
+				portInput.setEditable(false);
 			}
+			
 		});
+		
 		connectButton.setBounds(603, 9, 65, 34);
 		contentPane.add(connectButton);
 		
@@ -151,6 +161,7 @@ public class ChattingClient extends JFrame {
 		contentPane.add(contentScroll);
 		
 		contentView = new JTextArea();
+		contentView.setEditable(false);
 		contentScroll.setViewportView(contentView);
 		
 		JScrollPane userListScroll = new JScrollPane();
