@@ -68,6 +68,7 @@ public class UserManagementframe extends JFrame {
 					
 					UserManagementframe frame = new UserManagementframe();
 					frame.setVisible(true);
+					// except를 통해 기다리는 서버거 없다면 연결을 할수 없다고 메세지를 띄운다.
 				} catch (ConnectException e) {
 					JOptionPane.showMessageDialog(null,"서버에 연결할수가 없습니다.", "접속실패",JOptionPane.ERROR_MESSAGE);
 				} catch (Exception e) {
@@ -294,23 +295,22 @@ public class UserManagementframe extends JFrame {
 					String response = reader.readLine();
 					System.out.println("응답옴");
 					ResponseDto<?> responseDto = gson.fromJson(response, ResponseDto.class);
+					
+					// 오류가 떴을 때
+					if(responseDto.getCode().equals("error")) {
+						JOptionPane.showMessageDialog(null, responseDto.getBody(), responseDto.getCode(), JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					// 오류가 안 떴을 떄
+					JOptionPane.showMessageDialog(null, responseDto.getBody(), responseDto.getCode(), JOptionPane.INFORMATION_MESSAGE);
+					mainCard.show(mainPanel, "loginPanel");
+					clearFields(registerFields);
 					System.out.println(responseDto);
 				} catch (IOException e1) {
 					e1.printStackTrace();
-				}
+				} 
 				
-//				UserService userService = UserService.getInstance();
-//				
-//				Map<String, String> response = userService.register(userJson.toString());
-//				
-//				if(response.containsKey("error")) {
-//					JOptionPane.showMessageDialog(null, response.get("error"), "error", JOptionPane.ERROR_MESSAGE);
-//					return;
-//				}
-//				
-//				JOptionPane.showMessageDialog(null, response.get("ok"), "ok", JOptionPane.INFORMATION_MESSAGE);
-//				mainCard.show(mainPanel, "loginPanel");
-//				clearFields(registerFields);
+				
 		   }
 		});
 		registerButton.setForeground(Color.BLACK);

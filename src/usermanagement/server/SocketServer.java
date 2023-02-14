@@ -19,6 +19,7 @@ import usermanagement.entity.User;
 import usermanagement.server.controller.AccountController;
 
 public class SocketServer extends Thread {
+	// static으로 설정이 되었기에 클라이언트가 생성된 만큼 리스트에 넣어진다.
 	private static List<SocketServer> socketServerList = new ArrayList<>();
 	
 	private Socket socket;
@@ -48,11 +49,13 @@ public class SocketServer extends Thread {
 		BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
 		
 		while(true) {
+			// 현재 request에 들어오는 것은 json 형태이다.
 			String request = reader.readLine();
+			// 클라이언트로 부터 받은 데이터를 읽었을 때 null일 경우 멈춤
 			if(request == null) {
 				throw new ConnectException();				
 			}
-			
+			// null이 아니면 실행
 			RequestMapping(request);
 			
 		}
@@ -64,8 +67,8 @@ public class SocketServer extends Thread {
 		// 메세지를 보낼건지 받을건지 확인
 		switch (resoursce) {
 			case "register" :
-			User user = gson.fromJson((String)requestDto.getBody(), User.class);
-			ResponseDto<?> responseDto = AccountController.getInstance().register(user);
+			ResponseDto<?> responseDto = 
+				AccountController.getInstance().register((String)requestDto.getBody());
 			sendResponse(responseDto);
 			break;
 		default:
